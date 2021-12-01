@@ -8,9 +8,18 @@ defmodule Aoc2021.MixProject do
       elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+
+      name: "Advent Of Code 2021",
+      source_url: "https://github.com/rhbvkleef/aoc2021",
+
+      docs: [
+        source_ref: "master",
+        extras: ["README.md"]
+      ],
+
       dialyzer: [
         plt_add_deps: :transitive
-      ]
+      ],
     ]
   end
 
@@ -25,6 +34,7 @@ defmodule Aoc2021.MixProject do
   defp deps do
     [
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:ex_doc, "~> 0.24", only: :dev, runtime: false},
     ]
   end
 end

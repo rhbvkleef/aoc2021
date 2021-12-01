@@ -1,6 +1,8 @@
 defmodule Aoc2021 do
 
   @otp_app Mix.Project.config()[:app]
+
+  @doc "Main entry-point"
   def run do
     dir = Application.app_dir(@otp_app, "priv")
     files = Path.wildcard(dir <> "/day*.txt")
@@ -11,12 +13,14 @@ defmodule Aoc2021 do
       |> Enum.each(&format_output/1)
   end
 
+  @doc "Convert input text into an array of strings, representing lines."
   @spec strings1d(binary) :: [binary]
   def strings1d text do
     text
       |> String.split("\n", trim: true)
   end
 
+  @doc "Convert input text into an array of integers, with each line containing an integer."
   @spec integers1d(binary) :: [integer]
   def integers1d text do
     text

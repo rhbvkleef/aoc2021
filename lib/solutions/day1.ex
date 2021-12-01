@@ -3,10 +3,12 @@ defmodule Aoc2021.Solution.Day1 do
 
   @impl Aoc2021.Solution
   @spec parse(binary) :: [integer]
-  def parse(text), do: Aoc2021.integers1d(text)
+  @doc "Parse the input as a 1d integer array."
+  defdelegate parse(input), to: Aoc2021, as: :integers1d
 
   @impl Aoc2021.Solution
   @spec part1([integer], non_neg_integer) :: non_neg_integer
+  @doc "Count the occurrences where L_n < L_{n+1}."
   def part1(list, count \\ 0)
   def part1([a, b | rest], count) when a < b do
     part1 [b | rest], count + 1
@@ -18,6 +20,7 @@ defmodule Aoc2021.Solution.Day1 do
 
   @impl Aoc2021.Solution
   @spec part2([integer], non_neg_integer) :: non_neg_integer
+  @doc "Count the occurrences where (L_n + L_{n+1} + L_{n+2}) < (L_{n+1} + L_{N+2} + L_{N+3})."
   def part2(list, count \\ 0)
   def part2([a, b, c, d | rest], count) when (a + b + c) < (b + c + d) do
     part2 [b, c, d | rest], count + 1
