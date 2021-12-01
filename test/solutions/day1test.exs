@@ -1,5 +1,6 @@
 defmodule Aoc2021.Solution.Day1test do
   use ExUnit.Case, async: true
+  doctest Aoc2021.Solution.Day2
 
   @testinput [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
 

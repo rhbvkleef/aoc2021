@@ -8,6 +8,6 @@ All the solutions are placed in `lib/solutions`, all test cases are placed in
 `test/solutions`, and all inputs are placed in `priv`.
 The inputs are not included in this repository, as they differ on a per-person
 basis.
-Therefore, you can use the `init_day.exs` script to download the inputs and
+Therefore, you can use the `aoc.gen` script to download the inputs and
 place them in the correct place.
-To do this, run `mix run init_day.exs --day <DAY> --only-input`.
+To do this, run `mix aoc.gen --day <DAY> --fetch-input`.

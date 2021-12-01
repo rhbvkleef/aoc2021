@@ -1,14 +1,16 @@
 defmodule Aoc2021 do
-
   @otp_app Mix.Project.config()[:app]
 
   @doc "Main entry-point"
   def run do
-    dir = Application.app_dir(@otp_app, "priv")
-    files = Path.wildcard(dir <> "/day*.txt")
-    modules = files |> Enum.map(fn file -> {get_module(file), file} end)
+    find_days()
+      |> Enum.map(&run_module/1)
+      |> Enum.each(&format_output/1)
+  end
 
-    modules
+  def run days do
+    find_days()
+      |> Enum.filter(fn {day, _, _} -> Enum.any?(days, fn d -> d == day end) end)
       |> Enum.map(&run_module/1)
       |> Enum.each(&format_output/1)
   end
@@ -28,26 +30,39 @@ defmodule Aoc2021 do
       |> Enum.map(&String.to_integer/1)
   end
 
-  defp get_module name do
-    modulename = name
-      |> Path.basename
-      |> Path.rootname
-      |> String.capitalize
+  defp find_days do
+    dir = Application.app_dir(@otp_app, "priv")
 
-    String.to_atom("Elixir.Aoc2021.Solution." <> modulename)
+    Path.wildcard("#{dir}/day*.txt")
+      |> Enum.map(fn f -> {get_day(f), f} end)
+      |> Enum.map(fn {day, f} -> {day, f, get_module(day)} end)
   end
 
-  defp run_module({module, file}) do
+  defp get_day filename do
+    rx = ~r/[0-9]+/
+    filename
+      |> Path.basename
+      |> Path.rootname
+      |> Kernel.then(fn name -> Regex.run(rx, name) end)
+      |> hd
+      |> String.to_integer
+  end
+
+  defp get_module day do
+    String.to_atom("Elixir.Aoc2021.Solution.Day#{day}")
+  end
+
+  defp run_module({day, file, module}) do
     {iotime, text} = :timer.tc(File, :read!, [file])
     {parsetime, input} = :timer.tc(module, :parse, [text])
     part1 = :timer.tc(module, :part1, [input])
     part2 = :timer.tc(module, :part2, [input])
 
-    {module, iotime, parsetime, part1, part2}
+    {day, iotime, parsetime, part1, part2}
   end
 
-  defp format_output {module, iotime, parsetime, part1, part2} do
-    IO.puts("#{module |> to_string() |> String.split(".") |> List.last}:")
+  defp format_output {day, iotime, parsetime, part1, part2} do
+    IO.puts("Day #{day} results:")
     IO.puts("\tFile reading took #{iotime}us")
     IO.puts("\tParsing took #{parsetime}us")
 
