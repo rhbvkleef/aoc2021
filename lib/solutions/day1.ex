@@ -11,19 +11,20 @@ defmodule Aoc2021.Solution.Day1 do
   """
   @impl Aoc2021.Solution
   def part1 lines do
-    measurements = Aoc2021.integers(lines)
-    count_increasing(hd(measurements), tl(measurements))
+    lines
+      |> Aoc2021.integers
+      |> count_increasing
   end
 
-  @spec count_increasing(integer, [integer], integer) :: integer
-  defp count_increasing(last, list, count \\ 0)
-  defp count_increasing(last, [current | rest], count) when last < current do
-    count_increasing current, rest, count + 1
+  @spec count_increasing([integer], integer) :: integer
+  defp count_increasing(list, count \\ 0)
+  defp count_increasing([a, b | rest], count) when a < b do
+    count_increasing [b | rest], count + 1
   end
-  defp count_increasing(_, [current | rest], count) do
-    count_increasing current, rest, count
+  defp count_increasing([_a | rest], count) do
+    count_increasing rest, count
   end
-  defp count_increasing(_, [], count) do
+  defp count_increasing([], count) do
     count
   end
 
@@ -37,17 +38,18 @@ defmodule Aoc2021.Solution.Day1 do
   """
   @impl Aoc2021.Solution
   def part2 lines do
-    measurements = Aoc2021.integers(lines)
-    count_sliding(measurements)
+    lines
+      |> Aoc2021.integers
+      |> count_sliding
   end
 
   @spec count_sliding([integer], integer) :: integer
   defp count_sliding(list, count \\ 0)
   defp count_sliding([a, b, c, d | rest], count) when (a + b + c) < (b + c + d) do
-    count_sliding([b, c, d | rest], count + 1)
+    count_sliding [b, c, d | rest], count + 1
   end
-  defp count_sliding([_a, b, c, d | rest], count) do
-    count_sliding([b, c, d | rest], count)
+  defp count_sliding([_a | rest], count) do
+    count_sliding rest, count
   end
   defp count_sliding(_list, count) do
     count
