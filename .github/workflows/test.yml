@@ -1,0 +1,13 @@
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-beam@c255c7e97f15c92985793fe937175930f5c056ca
+        with:
+          otp-version: '24.1'
+          elixir-version: '1.12.3'
+      - run: mix deps.get
+      - run: mix test test/**/*.exs

@@ -24,9 +24,7 @@ defmodule Aoc2021.Solution.Day1 do
   defp count_increasing([_a | rest], count) do
     count_increasing rest, count
   end
-  defp count_increasing([], count) do
-    count
-  end
+  defp count_increasing([], count), do: count
 
   @doc ~S"""
   Solution for 2021 day 1, part 2
@@ -51,7 +49,5 @@ defmodule Aoc2021.Solution.Day1 do
   defp count_sliding([_a | rest], count) do
     count_sliding rest, count
   end
-  defp count_sliding(_list, count) do
-    count
-  end
+  defp count_sliding(_list, count), do: count
 end

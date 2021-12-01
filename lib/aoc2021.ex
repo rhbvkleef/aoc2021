@@ -6,7 +6,9 @@ defmodule Aoc2021 do
     files = Path.wildcard(dir <> "/day*.txt")
     modules = files |> Enum.map(fn file -> {get_module(file), file} end)
 
-    IO.inspect(modules |> Enum.map(&run_module/1))
+    modules
+      |> Enum.map(&run_module/1)
+      |> Enum.each(&format_output/1)
   end
 
   @spec integers(list(binary())) :: list(integer())
@@ -31,17 +33,41 @@ defmodule Aoc2021 do
       |> String.split("\n", trim: true)
 
     part1 = if Keyword.has_key?(module.__info__(:functions), :part1) do
-      module.part1 lines
+      :timer.tc(module, :part1, [lines])
     else
       nil
     end
 
     part2 = if Keyword.has_key?(module.__info__(:functions), :part2) do
-      module.part2 lines
+      :timer.tc(module, :part1, [lines])
     else
       nil
     end
 
     {module, part1, part2}
+  end
+
+  def format_output {module, part1, part2} do
+    IO.puts("#{module |> to_string() |> String.split(".") |> List.last}:")
+
+    if part1 != nil do
+      IO.puts("\tPart 1 ran in #{elem(part1, 0)}us:")
+      inspect(elem(part1, 1))
+        |> String.split("\n", trim: true)
+        |> Enum.map(fn s -> "\t\t#{s}" end)
+        |> Enum.join("\n")
+        |> IO.puts
+    end
+
+    if part2 != nil do
+      IO.puts("\tPart 2 ran in #{elem(part2, 0)}us:")
+      inspect(elem(part2, 1))
+        |> String.split("\n", trim: true)
+        |> Enum.map(fn s -> "\t\t#{s}" end)
+        |> Enum.join("\n")
+        |> IO.puts
+    end
+
+    :ok
   end
 end
