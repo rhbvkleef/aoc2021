@@ -1,4 +1,5 @@
 defmodule Aoc2021.Solution do
-  @callback part1([binary]) :: any
-  @callback part2([binary]) :: any
+  @callback parse(binary) :: any
+  @callback part1(any) :: any
+  @callback part2(any) :: any
 end

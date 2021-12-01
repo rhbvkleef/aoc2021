@@ -11,62 +11,55 @@ defmodule Aoc2021 do
       |> Enum.each(&format_output/1)
   end
 
-  @spec integers(list(binary())) :: list(integer())
-  def integers lines do
-    lines
+  @spec strings1d(binary) :: [binary]
+  def strings1d text do
+    text
+      |> String.split("\n", trim: true)
+  end
+
+  @spec integers1d(binary) :: [integer]
+  def integers1d text do
+    text
+      |> strings1d
       |> Enum.map(&String.to_integer/1)
   end
 
   defp get_module name do
     modulename = name
       |> Path.basename
-      |> String.split(".")
-      |> hd
+      |> Path.rootname
       |> String.capitalize
 
     String.to_atom("Elixir.Aoc2021.Solution." <> modulename)
   end
 
   defp run_module({module, file}) do
-    lines = file
-      |> File.read!
-      |> String.split("\n", trim: true)
+    {iotime, text} = :timer.tc(File, :read!, [file])
+    {parsetime, input} = :timer.tc(module, :parse, [text])
+    part1 = :timer.tc(module, :part1, [input])
+    part2 = :timer.tc(module, :part2, [input])
 
-    part1 = if Keyword.has_key?(module.__info__(:functions), :part1) do
-      :timer.tc(module, :part1, [lines])
-    else
-      nil
-    end
-
-    part2 = if Keyword.has_key?(module.__info__(:functions), :part2) do
-      :timer.tc(module, :part1, [lines])
-    else
-      nil
-    end
-
-    {module, part1, part2}
+    {module, iotime, parsetime, part1, part2}
   end
 
-  def format_output {module, part1, part2} do
+  defp format_output {module, iotime, parsetime, part1, part2} do
     IO.puts("#{module |> to_string() |> String.split(".") |> List.last}:")
+    IO.puts("\tFile reading took #{iotime}us")
+    IO.puts("\tParsing took #{parsetime}us")
 
-    if part1 != nil do
-      IO.puts("\tPart 1 ran in #{elem(part1, 0)}us:")
-      inspect(elem(part1, 1))
-        |> String.split("\n", trim: true)
-        |> Enum.map(fn s -> "\t\t#{s}" end)
-        |> Enum.join("\n")
-        |> IO.puts
-    end
+    IO.puts("\tPart 1 ran in #{elem(part1, 0)}us:")
+    inspect(elem(part1, 1))
+      |> String.split("\n", trim: true)
+      |> Enum.map(fn s -> "\t\t#{s}" end)
+      |> Enum.join("\n")
+      |> IO.puts
 
-    if part2 != nil do
-      IO.puts("\tPart 2 ran in #{elem(part2, 0)}us:")
-      inspect(elem(part2, 1))
-        |> String.split("\n", trim: true)
-        |> Enum.map(fn s -> "\t\t#{s}" end)
-        |> Enum.join("\n")
-        |> IO.puts
-    end
+    IO.puts("\tPart 2 ran in #{elem(part2, 0)}us:")
+    inspect(elem(part2, 1))
+      |> String.split("\n", trim: true)
+      |> Enum.map(fn s -> "\t\t#{s}" end)
+      |> Enum.join("\n")
+      |> IO.puts
 
     :ok
   end

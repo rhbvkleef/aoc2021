@@ -1,22 +1,15 @@
 defmodule Aoc2021.Solution.Day1 do
   @behaviour Aoc2021.Solution
 
-  @doc ~S"""
-  Solution for 2021 day 1, part 1
-
-  ## Examples
-
-      iex> Aoc2021.Solution.Day1.part1 ["199", "200", "208", "210", "200", "207", "240", "269", "260", "263"]
-      7
-  """
   @impl Aoc2021.Solution
-  def part1 lines do
-    lines
-      |> Aoc2021.integers
-      |> count_increasing
-  end
+  @spec parse(binary) :: [integer]
+  def parse(text), do: Aoc2021.integers1d(text)
 
-  @spec count_increasing([integer], integer) :: integer
+  @impl Aoc2021.Solution
+  @spec part1([integer]) :: non_neg_integer
+  def part1(integers), do: count_increasing(integers)
+
+  @spec count_increasing([integer], non_neg_integer) :: non_neg_integer
   defp count_increasing(list, count \\ 0)
   defp count_increasing([a, b | rest], count) when a < b do
     count_increasing [b | rest], count + 1
@@ -26,22 +19,11 @@ defmodule Aoc2021.Solution.Day1 do
   end
   defp count_increasing([], count), do: count
 
-  @doc ~S"""
-  Solution for 2021 day 1, part 2
-
-  ## Examples
-
-      iex> Aoc2021.Solution.Day1.part2 ["199", "200", "208", "210", "200", "207", "240", "269", "260", "263"]
-      5
-  """
   @impl Aoc2021.Solution
-  def part2 lines do
-    lines
-      |> Aoc2021.integers
-      |> count_sliding
-  end
+  @spec part2([integer]) :: non_neg_integer
+  def part2(integers), do: count_sliding(integers)
 
-  @spec count_sliding([integer], integer) :: integer
+  @spec count_sliding([integer], non_neg_integer) :: non_neg_integer
   defp count_sliding(list, count \\ 0)
   defp count_sliding([a, b, c, d | rest], count) when (a + b + c) < (b + c + d) do
     count_sliding [b, c, d | rest], count + 1
