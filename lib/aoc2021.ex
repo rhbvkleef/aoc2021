@@ -30,6 +30,28 @@ defmodule Aoc2021 do
       |> Enum.map(&String.to_integer/1)
   end
 
+  @doc "Convert input text into a 2d array of strings, where each line contains a space-separate list of strings."
+  @spec strings2d(binary) :: [[binary]]
+  def strings2d text do
+    text
+      |> strings1d
+      |> Enum.map(fn line -> String.split(line, " ") end)
+  end
+
+  @doc "Using the mapping function, map each line to a tuple of values"
+  @spec tuples1d(binary, tuple) :: [tuple]
+  def tuples1d text, mapping do
+    funs = Tuple.to_list(mapping)
+
+    text
+      |> strings2d
+      |> Enum.map(fn cols ->
+        Enum.zip([funs, cols])
+          |> Enum.map(fn {fun, col} -> apply(fun, [col]) end)
+      end)
+      |> Enum.map(&List.to_tuple/1)
+  end
+
   defp find_days do
     dir = Application.app_dir(@otp_app, "priv")
 
