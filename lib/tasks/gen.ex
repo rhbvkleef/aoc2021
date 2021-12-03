@@ -46,13 +46,19 @@ defmodule Mix.Tasks.Aoc.Gen do
   defp create_input day do
     cookie = File.read!(Path.relative_to_cwd("cookie.txt"))
 
-    {:ok, {_, _, body}} = :httpc.request(:get,
+    {:ok, {{_proto_version, status_code, status_text}, _hdrs, body}} = :httpc.request(:get,
       {
         "https://adventofcode.com/2021/day/#{day}/input",
         [{'Cookie', 'session=#{cookie}'}]
-      }, [], [sync: true])
+      }, [ssl: [verify: :verify_peer, cacertfile: '/etc/ssl/cert.pem']], [sync: true])
 
+    if status_code != 200 do
+      Mix.shell().error([:red, "Error: ", :reset, " Could not download inputs: #{status_text}"])
+    else
       Mix.Generator.create_file("priv/day#{day}.txt", body)
+    end
+
+    :ok
   end
 
   defp create_implfile day do
