@@ -21,14 +21,11 @@ defmodule Aoc2021.Solution.Day3 do
       end)
       |> :erlang.list_to_integer(2)
 
-    least = one_counts
-      |> Enum.map(fn
-        ones when (total / 2) > ones -> ?1
-        _ -> ?0
-      end)
-      |> :erlang.list_to_integer(2)
+    mask = one_counts
+      |> Enum.reduce(1, fn _, acc -> Bitwise.|||(Bitwise.<<<(acc, 1), 1) end)
+      |> Bitwise.>>>(1)
 
-    most * least
+    most * Bitwise.&&&(Bitwise.bnot(most), mask)
   end
 
   defp transpose([[] | _]), do: []
