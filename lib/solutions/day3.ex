@@ -14,13 +14,11 @@ defmodule Aoc2021.Solution.Day3 do
 
     most = counts
       |> Enum.map(fn {zeros, ones} -> if zeros > ones do ?0 else ?1 end end)
-      |> to_string
-      |> String.to_integer(2)
+      |> :erlang.list_to_integer(2)
 
     least = counts
       |> Enum.map(fn {zeros, ones} -> if zeros > ones do ?1 else ?0 end end)
-      |> to_string
-      |> String.to_integer(2)
+      |> :erlang.list_to_integer(2)
 
     most * least
   end
@@ -52,7 +50,7 @@ defmodule Aoc2021.Solution.Day3 do
     {oxy, _} = part2_reduce(entries, fn (a, b) -> if a <= b do ?1 else ?0 end end)
     {co2, _} = part2_reduce(entries, fn (a, b) -> if a <= b do ?0 else ?1 end end)
 
-    String.to_integer(to_string(oxy), 2) * String.to_integer(to_string(co2), 2)
+    :erlang.list_to_integer(oxy, 2) * :erlang.list_to_integer(co2, 2)
   end
 
   defp part2_reduce [result], _ do
