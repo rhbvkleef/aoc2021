@@ -85,8 +85,8 @@ defmodule Mix.Tasks.Aoc.Gen do
   end
 
   defp create_testfile day do
-    Mix.Generator.create_file("test/solutions/day#{day}test.exs", """
-    defmodule Aoc2021.Solution.Day#{day}test do
+    Mix.Generator.create_file("test/solutions/day#{day}_test.exs", """
+    defmodule Aoc2021.Solution.Day#{day}Test do
       use ExUnit.Case, async: true
       doctest Aoc2021.Solution.Day#{day}
 

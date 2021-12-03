@@ -1,4 +1,4 @@
-defmodule Aoc2021.Solution.Day3test do
+defmodule Aoc2021.Solution.Day3Test do
   use ExUnit.Case, async: true
   doctest Aoc2021.Solution.Day3
 
