@@ -8,40 +8,31 @@ defmodule Aoc2021.Solution.Day3 do
 
   @impl Aoc2021.Solution
   def part1 input do
-    counts = input
-      |> Enum.map(fn line -> {line, line} end)
-      |> part1_count
+    total = length(input)
 
-    most = counts
-      |> Enum.map(fn {zeros, ones} -> if zeros > ones do ?0 else ?1 end end)
+    one_counts = input
+      |> transpose
+      |> Enum.map(fn bit -> Enum.count(bit, fn elem -> elem == ?1 end) end)
+
+    most = one_counts
+      |> Enum.map(fn
+        ones when (total / 2) > ones -> ?0
+        _ -> ?1
+      end)
       |> :erlang.list_to_integer(2)
 
-    least = counts
-      |> Enum.map(fn {zeros, ones} -> if zeros > ones do ?1 else ?0 end end)
+    least = one_counts
+      |> Enum.map(fn
+        ones when (total / 2) > ones -> ?1
+        _ -> ?0
+      end)
       |> :erlang.list_to_integer(2)
 
     most * least
   end
 
-  defp count_column pairs do
-    Enum.reduce(
-      pairs,
-      {0, 0},
-      fn {_, [chr | _]}, {zeros, ones} ->
-        if chr == ?0 do {zeros + 1, ones}
-        else {zeros, ones + 1} end
-      end)
-  end
-
-  defp part1_count [{_, []} | _] do
-    []
-  end
-  defp part1_count lines do
-    new_lines = lines
-      |> Enum.map(fn {txt, [_ | rest]} -> {txt, rest} end)
-
-    [count_column(lines) | part1_count(new_lines)]
-  end
+  defp transpose([[] | _]), do: []
+  defp transpose(list), do: [Enum.map(list, &hd/1) | transpose(Enum.map(list, &tl/1))]
 
   @impl Aoc2021.Solution
   def part2 input do
@@ -65,5 +56,15 @@ defmodule Aoc2021.Solution.Day3 do
       |> Enum.map(fn {actual, [_ | rest]} -> {actual, rest} end)
 
     part2_reduce  result, comparator
+  end
+
+  defp count_column pairs do
+    Enum.reduce(
+      pairs,
+      {0, 0},
+      fn {_, [chr | _]}, {zeros, ones} ->
+        if chr == ?0 do {zeros + 1, ones}
+        else {zeros, ones + 1} end
+      end)
   end
 end
