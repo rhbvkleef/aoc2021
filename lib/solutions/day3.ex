@@ -8,14 +8,16 @@ defmodule Aoc2021.Solution.Day3 do
 
   @impl Aoc2021.Solution
   def part1 input do
-    result = part1reduce input, List.duplicate({0, 0}, String.length(hd(input)))
+    counts = input
+      |> Enum.map(fn line -> {line, String.to_charlist(line)} end)
+      |> part1_count
 
-    most = result
+    most = counts
       |> Enum.map(fn {zeros, ones} -> if zeros > ones do ?0 else ?1 end end)
       |> to_string
       |> String.to_integer(2)
 
-    least = result
+    least = counts
       |> Enum.map(fn {zeros, ones} -> if zeros > ones do ?1 else ?0 end end)
       |> to_string
       |> String.to_integer(2)
@@ -23,47 +25,47 @@ defmodule Aoc2021.Solution.Day3 do
     most * least
   end
 
-  defp part1reduce [line|lines], counts do
-    new_counts = part1reduceline(String.to_charlist(line), counts)
-    part1reduce lines, new_counts
-  end
-  defp part1reduce [], counts do
-    counts
+  defp count_column pairs do
+    Enum.reduce(
+      pairs,
+      {0, 0},
+      fn {_, [chr | _]}, {zeros, ones} ->
+        if chr == ?0 do {zeros + 1, ones}
+        else {zeros, ones + 1} end
+      end)
   end
 
-  defp part1reduceline [?0|chars], [{zeros, ones}|counts] do
-    [{zeros + 1, ones} | part1reduceline(chars, counts)]
-  end
-  defp part1reduceline [?1|chars], [{zeros, ones}|counts] do
-    [{zeros, ones + 1} | part1reduceline(chars, counts)]
-  end
-  defp part1reduceline [], [] do
+  defp part1_count [{_, []} | _] do
     []
+  end
+  defp part1_count lines do
+    new_lines = lines
+      |> Enum.map(fn {txt, [_ | rest]} -> {txt, rest} end)
+
+    [count_column(lines) | part1_count(new_lines)]
   end
 
   @impl Aoc2021.Solution
   def part2 input do
     entries = input |> Enum.map(fn cur -> {cur, String.to_charlist(cur)} end)
 
-    {oxy, _} = part2do(entries, fn (a, b) -> if a <= b do ?1 else ?0 end end)
-    {co2, _} = part2do(entries, fn (a, b) -> if a <= b do ?0 else ?1 end end)
+    {oxy, _} = part2_reduce(entries, fn (a, b) -> if a <= b do ?1 else ?0 end end)
+    {co2, _} = part2_reduce(entries, fn (a, b) -> if a <= b do ?0 else ?1 end end)
 
     String.to_integer(oxy, 2) * String.to_integer(co2, 2)
   end
 
-  defp part2do input, comparator do
-    {zeros, ones} = input
-      |> Enum.reduce({0, 0}, fn {_, [chr | _]}, {zeros, ones} -> if chr == ?0 do {zeros + 1, ones} else {zeros, ones + 1} end end)
+  defp part2_reduce [result], _ do
+    result
+  end
+  defp part2_reduce input, comparator do
+    {zeros, ones} = count_column(input)
 
     by = apply(comparator, [zeros, ones])
     result = input
       |> Enum.filter(fn {_, [ih | _]} -> ih == by end)
       |> Enum.map(fn {actual, [_ | rest]} -> {actual, rest} end)
 
-    if length(result) == 1 do
-      hd(result)
-    else
-      part2do result, comparator
-    end
+    part2_reduce  result, comparator
   end
 end
