@@ -2,14 +2,14 @@ defmodule Aoc2021.Solution.Day3 do
   @behaviour Aoc2021.Solution
 
   @impl Aoc2021.Solution
-  @spec parse(binary) :: [binary]
-  @doc "Parse the input as a 1d string array."
-  defdelegate parse(input), to: Aoc2021, as: :strings1d
+  @spec parse(binary) :: [[char]]
+  @doc "Parse the input as a 1d list of charlists"
+  defdelegate parse(input), to: Aoc2021, as: :chars2d
 
   @impl Aoc2021.Solution
   def part1 input do
     counts = input
-      |> Enum.map(fn line -> {line, String.to_charlist(line)} end)
+      |> Enum.map(fn line -> {line, line} end)
       |> part1_count
 
     most = counts
@@ -47,12 +47,12 @@ defmodule Aoc2021.Solution.Day3 do
 
   @impl Aoc2021.Solution
   def part2 input do
-    entries = input |> Enum.map(fn cur -> {cur, String.to_charlist(cur)} end)
+    entries = input |> Enum.map(fn cur -> {cur, cur} end)
 
     {oxy, _} = part2_reduce(entries, fn (a, b) -> if a <= b do ?1 else ?0 end end)
     {co2, _} = part2_reduce(entries, fn (a, b) -> if a <= b do ?0 else ?1 end end)
 
-    String.to_integer(oxy, 2) * String.to_integer(co2, 2)
+    String.to_integer(to_string(oxy), 2) * String.to_integer(to_string(co2), 2)
   end
 
   defp part2_reduce [result], _ do

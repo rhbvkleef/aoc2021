@@ -22,6 +22,14 @@ defmodule Aoc2021 do
       |> String.split("\n", trim: true)
   end
 
+  @doc "Convert input text into a 2d array of characters."
+  @spec chars2d(binary) :: [[char]]
+  def chars2d text do
+    text
+      |> strings1d
+      |> Enum.map(&String.to_charlist/1)
+  end
+
   @doc "Convert input text into an array of integers, with each line containing an integer."
   @spec integers1d(binary) :: [integer]
   def integers1d text do
