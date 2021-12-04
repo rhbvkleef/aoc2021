@@ -23,6 +23,12 @@ defmodule Aoc do
 
         doctest @mod
 
+        @test_input File.read!(Path.relative_to_cwd("priv/test_inputs/year#{@year}/day#{@day}.txt"))
+
+        defmacro parsed do
+          @mod.parse(@test_input)
+        end
+
         unquote(body)
       end
     end
