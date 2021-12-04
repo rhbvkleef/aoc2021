@@ -27,7 +27,10 @@ defmodule Aoc2021 do
   def chars2d text do
     text
       |> strings1d
-      |> Enum.map(&String.to_charlist/1)
+      # This assumes that all input is latin1, which it is.
+      #  It's slightly faster than using &String.to_charlist/1 as we don't
+      #  have to deal with unicode nonsense.
+      |> Enum.map(&:erlang.binary_to_list/1)
   end
 
   @doc "Convert input text into an array of integers, with each line containing an integer."
@@ -43,7 +46,7 @@ defmodule Aoc2021 do
   def strings2d text do
     text
       |> strings1d
-      |> Enum.map(fn line -> String.split(line, " ") end)
+      |> Enum.map(&(String.split(&1, " ")))
   end
 
   @doc "Using the mapping function, map each line to a tuple of values"
@@ -64,7 +67,7 @@ defmodule Aoc2021 do
     dir = Application.app_dir(@otp_app, "priv")
 
     Path.wildcard("#{dir}/day*.txt")
-      |> Enum.map(fn f -> {get_day(f), f} end)
+      |> Enum.map(&({get_day(&1), &1}))
       |> Enum.map(fn {day, f} -> {day, f, get_module(day)} end)
   end
 
@@ -73,7 +76,7 @@ defmodule Aoc2021 do
     filename
       |> Path.basename
       |> Path.rootname
-      |> Kernel.then(fn name -> Regex.run(rx, name) end)
+      |> then(&(Regex.run(rx, &1)))
       |> hd
       |> String.to_integer
   end
@@ -99,14 +102,14 @@ defmodule Aoc2021 do
     IO.puts("\tPart 1 ran in #{elem(part1, 0)}us:")
     inspect(elem(part1, 1))
       |> String.split("\n", trim: true)
-      |> Enum.map(fn s -> "\t\t#{s}" end)
+      |> Enum.map(&("\t\t#{&1}"))
       |> Enum.join("\n")
       |> IO.puts
 
     IO.puts("\tPart 2 ran in #{elem(part2, 0)}us:")
     inspect(elem(part2, 1))
       |> String.split("\n", trim: true)
-      |> Enum.map(fn s -> "\t\t#{s}" end)
+      |> Enum.map(&("\t\t#{&1}"))
       |> Enum.join("\n")
       |> IO.puts
 

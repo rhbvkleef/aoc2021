@@ -9,8 +9,8 @@ defmodule Mix.Tasks.Aoc do
     )
 
     days = params
-      |> Enum.filter(fn param -> elem(param, 0) == :day end)
-      |> Enum.map(fn param -> elem(param, 1) end)
+      |> Enum.filter(&(elem(&1, 0) == :day))
+      |> Enum.map(&(elem(&1, 1)))
 
     if Enum.empty?(days) do
       Aoc2021.run
