@@ -1,10 +1,10 @@
-defmodule Aoc2021.Solution.Day3 do
-  @behaviour Aoc2021.Solution
+import Aoc
 
-  @impl Aoc2021.Solution
-  defdelegate parse(input), to: Aoc2021, as: :chars2d
+aoc 2021, 3 do
+  @impl Aoc.Solution
+  defdelegate parse(input), to: Aoc, as: :chars2d
 
-  @impl Aoc2021.Solution
+  @impl Aoc.Solution
   def part1 input do
     total = length(input)
 
@@ -28,7 +28,7 @@ defmodule Aoc2021.Solution.Day3 do
     most * Bitwise.&&&(Bitwise.bnot(most), mask)
   end
 
-  @impl Aoc2021.Solution
+  @impl Aoc.Solution
   def part2 input do
     oxy = part2_reduce(input, &(&1 > &2))
     co2 = part2_reduce(input, &(&1 <= &2))

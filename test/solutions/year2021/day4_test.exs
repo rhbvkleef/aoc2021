@@ -1,7 +1,6 @@
-defmodule Aoc2021.Solution.Day4Test do
-  use ExUnit.Case, async: true
-  doctest Aoc2021.Solution.Day4
+import Aoc
 
+aoc_test 2021, 4 do
   @test_input """
   7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,25,1
 
@@ -24,21 +23,19 @@ defmodule Aoc2021.Solution.Day4Test do
    2  0 12  3  7
   """
 
-  @test_input_parsed Aoc2021.Solution.Day4.parse(@test_input)
-
   test "parse" do
-    assert elem(@test_input_parsed, 0) == Enum.map([
+    assert elem(mod().parse(@test_input), 0) == Enum.map([
       7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,25,1
     ], &Integer.to_string/1)
 
-    assert length(elem(@test_input_parsed, 1)) == 3
+    assert length(elem(mod().parse(@test_input), 1)) == 3
   end
 
   test "Part 1" do
-    assert Aoc2021.Solution.Day4.part1(@test_input_parsed) == 4512
+    assert mod().part1(mod().parse(@test_input)) == 4512
   end
 
   test "Part 2" do
-    assert Aoc2021.Solution.Day4.part2(@test_input_parsed) == 1924
+    assert mod().part2(mod().parse(@test_input)) == 1924
   end
 end

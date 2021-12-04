@@ -27,4 +27,4 @@ aoc2021-*.tar
 
 cookie.txt
 
-/priv/*.txt
+/priv/**/*.txt

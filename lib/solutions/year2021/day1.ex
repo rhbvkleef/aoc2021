@@ -1,10 +1,10 @@
-defmodule Aoc2021.Solution.Day1 do
-  @behaviour Aoc2021.Solution
+import Aoc
 
-  @impl Aoc2021.Solution
-  defdelegate parse(input), to: Aoc2021, as: :integers1d
+aoc 2021, 1 do
+  @impl Aoc.Solution
+  defdelegate parse(input), to: Aoc, as: :integers1d
 
-  @impl Aoc2021.Solution
+  @impl Aoc.Solution
   def part1(list, count \\ 0)
   def part1([a, b | rest], count) when a < b do
     part1 [b | rest], count + 1
@@ -14,7 +14,7 @@ defmodule Aoc2021.Solution.Day1 do
   end
   def part1([], count), do: count
 
-  @impl Aoc2021.Solution
+  @impl Aoc.Solution
   def part2(list, count \\ 0)
   def part2([a, b, c, d | rest], count) when a < d do
     part2 [b, c, d | rest], count + 1

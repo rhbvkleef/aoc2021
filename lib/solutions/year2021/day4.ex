@@ -1,7 +1,7 @@
-defmodule Aoc2021.Solution.Day4 do
-  @behaviour Aoc2021.Solution
+import Aoc
 
-  @impl Aoc2021.Solution
+aoc 2021, 4 do
+  @impl Aoc.Solution
   def parse text do
     [calls, ""|rest] = String.split(text, "\n")
     numbers = String.split(calls, ",")
@@ -14,7 +14,7 @@ defmodule Aoc2021.Solution.Day4 do
     {numbers, boards}
   end
 
-  @impl Aoc2021.Solution
+  @impl Aoc.Solution
   def part1 {[number|numbers], boards} do
     applied = Enum.map(boards, &(apply_number(number, &1)))
 
@@ -43,7 +43,7 @@ defmodule Aoc2021.Solution.Day4 do
   end
   defp apply_number(_, [], columns), do: {Enum.any?(columns), []}
 
-  @impl Aoc2021.Solution
+  @impl Aoc.Solution
   def part2 {[number|numbers], boards} do
     applied = Enum.map(boards, &(apply_number(number, &1)))
 
