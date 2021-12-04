@@ -57,7 +57,7 @@ defmodule Mix.Tasks.Aoc.Gen do
     if status_code != 200 do
       Mix.shell().error([:red, "Error: ", :reset, " Could not download inputs: #{status_text}"])
     else
-      Mix.Generator.create_file("priv/year#{year}/day#{day}.txt", body)
+      Mix.Generator.create_file("priv/inputs/year#{year}/day#{day}.txt", body)
     end
 
     :ok

@@ -6,6 +6,7 @@ defmodule Mix.Tasks.Aoc do
       switches: [
         year: [:integer, :keep],
         day: [:integer, :keep],
+        input_root: :string,
       ]
     )
 
@@ -17,15 +18,20 @@ defmodule Mix.Tasks.Aoc do
       |> Enum.filter(&(elem(&1, 0) == :day))
       |> Enum.map(&(elem(&1, 1)))
 
-    find_inputs()
+    input_root = case params[:input_root] do
+        nil  -> "priv/inputs"
+        path -> path
+    end
+
+    find_inputs(input_root)
       |> Enum.filter(fn {year, _, _} -> if Enum.empty?(years) do true else Enum.member?(years, year) end end)
       |> Enum.filter(fn {_, day, _}  -> if Enum.empty?(days) do true else Enum.member?(days, day) end end)
       |> Enum.map(fn {year, day, file} -> Aoc.Solution.run(year, day, file) end)
       |> Enum.each(&format_output/1)
   end
 
-  defp find_inputs do
-    dir = Path.relative_to_cwd("priv")
+  defp find_inputs input_root do
+    dir = Path.relative_to_cwd(input_root)
 
     Path.wildcard("#{dir}/year*/day*.txt")
       |> Enum.map(&({get_year_day(&1), &1}))

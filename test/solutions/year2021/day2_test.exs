@@ -10,10 +10,10 @@ aoc_test 2021, 2 do
     {:forward, 2}]
 
   test "Part 1" do
-    assert mod().part1(@test_input) == 150
+    assert @mod.part1(@test_input) == 150
   end
 
   test "Part 2" do
-    assert mod().part2(@test_input) == 900
+    assert @mod.part2(@test_input) == 900
   end
 end

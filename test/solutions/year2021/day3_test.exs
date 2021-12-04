@@ -17,10 +17,10 @@ aoc_test 2021, 3 do
   ]
 
   test "Part 1" do
-    assert mod().part1(@test_input) == 198
+    assert @mod.part1(@test_input) == 198
   end
 
   test "Part 2" do
-    assert mod().part2(@test_input) == 230
+    assert @mod.part2(@test_input) == 230
   end
 end

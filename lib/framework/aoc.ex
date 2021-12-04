@@ -4,6 +4,9 @@ defmodule Aoc do
       defmodule unquote(modulename(year, day)) do
         @behaviour Aoc.Solution
 
+        @year unquote(year)
+        @day unquote(day)
+
         unquote(body)
       end
     end
@@ -14,9 +17,11 @@ defmodule Aoc do
       defmodule unquote(Module.concat([Aoc.SolutionTests, String.to_atom("Year#{year}"), String.to_atom("Day#{day}")])) do
         use ExUnit.Case, async: true
 
-        defmacrop mod, do: unquote(modulename(year, day))
+        @mod unquote(modulename(year, day))
+        @year unquote(year)
+        @day unquote(day)
 
-        doctest unquote(modulename(year, day))
+        doctest @mod
 
         unquote(body)
       end
