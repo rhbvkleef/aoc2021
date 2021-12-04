@@ -5,7 +5,6 @@ defmodule Mix.Tasks.Aoc.Gen do
     {opts, _} = OptionParser.parse!(args,
       switches: [
         input: :boolean,
-        tests: :boolean,
         solution: :boolean,
         year: :integer,
         day: :integer,
@@ -15,27 +14,24 @@ defmodule Mix.Tasks.Aoc.Gen do
     year = opts[:year]
 
     if day == nil do
-      Mix.shell().error([:red, "Error: ", :reset, "You must specify a day."])
+      Mix.shell().error([:red, "error: ", :reset, "You must specify a day."])
       System.halt(1)
+    end
+
+    if not (c(opts[:solution]) or c(opts[:input])) do
+      Mix.shell().error([:yellow, "warning: ", :reset, "You should specify some action. This command is a no-op without them."])
     end
 
     year = if year == nil do
       y = DateTime.utc_now |> Map.fetch!(:year)
-      Mix.shell().error([:yellow, "Warning: ", :reset, "Year not specified. Implying the year: #{y}"])
+      Mix.shell().error([:blue, "info: ", :reset, "Year not specified. Implying the year: #{y}"])
       y
     else
       year
     end
 
-    if not (c(opts[:solution]) or c(opts[:tests]) or c(opts[:input])) do
-      Mix.shell().error([:yellow, "Warning: ", :reset, "You should specify some action. This command is a no-op without them."])
-    end
-
     if opts[:solution] do
       create_implfile year, day
-    end
-
-    if opts[:tests] do
       create_testfile year, day
     end
 
@@ -46,12 +42,8 @@ defmodule Mix.Tasks.Aoc.Gen do
     :ok
   end
 
-  defp c(v) when is_nil(v) do
-    false
-  end
-  defp c(v) when is_boolean(v) do
-    v
-  end
+  defp c(nil), do: false
+  defp c(v) when is_boolean(v), do: v
 
   defp create_input year, day do
     cookie = File.read!(Path.relative_to_cwd("cookie.txt"))
