@@ -12,11 +12,11 @@ defmodule Mix.Tasks.Aoc do
 
     years = params
       |> Enum.filter(&(elem(&1, 0) == :year))
-      |> Enum.map(&(elem(&1, 1)))
+      |> Enum.map(&elem(&1, 1))
 
     days = params
       |> Enum.filter(&(elem(&1, 0) == :day))
-      |> Enum.map(&(elem(&1, 1)))
+      |> Enum.map(&elem(&1, 1))
 
     input_root = case params[:input_root] do
         nil  -> "priv/inputs"
@@ -26,15 +26,16 @@ defmodule Mix.Tasks.Aoc do
     find_inputs(input_root)
       |> Enum.filter(fn {year, _, _} -> if Enum.empty?(years) do true else Enum.member?(years, year) end end)
       |> Enum.filter(fn {_, day, _}  -> if Enum.empty?(days) do true else Enum.member?(days, day) end end)
-      |> Enum.map(fn {year, day, file} -> Aoc.Solution.run(year, day, file) end)
-      |> Enum.each(&format_output/1)
+      |> Stream.map(fn {year, day, file} -> Aoc.Solution.run(year, day, file) end)
+      |> Stream.each(&format_output/1)
+      |> Stream.run
   end
 
   defp find_inputs input_root do
     dir = Path.relative_to_cwd(input_root)
 
     Path.wildcard("#{dir}/year*/day*.txt")
-      |> Enum.map(&({get_year_day(&1), &1}))
+      |> Enum.map(&{get_year_day(&1), &1})
       |> Enum.map(fn {{year, day}, f} -> {year, day, f} end)
   end
 
@@ -52,14 +53,14 @@ defmodule Mix.Tasks.Aoc do
     IO.puts("\tPart 1 ran in #{elem(part1, 0)}us:")
     inspect(elem(part1, 1))
       |> String.split("\n", trim: true)
-      |> Enum.map(&("\t\t#{&1}"))
+      |> Enum.map(&"\t\t#{&1}")
       |> Enum.join("\n")
       |> IO.puts
 
     IO.puts("\tPart 2 ran in #{elem(part2, 0)}us:")
     inspect(elem(part2, 1))
       |> String.split("\n", trim: true)
-      |> Enum.map(&("\t\t#{&1}"))
+      |> Enum.map(&"\t\t#{&1}")
       |> Enum.join("\n")
       |> IO.puts
 

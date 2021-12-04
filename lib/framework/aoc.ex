@@ -69,19 +69,26 @@ defmodule Aoc do
   def strings2d text do
     text
       |> strings1d
-      |> Enum.map(&(String.split(&1, " ")))
+      |> Enum.map(&String.split(&1, " "))
   end
 
-  @doc "Using the mapping function, map each line to a tuple of values"
+  @doc "Using the shape, map each line to a tuple of values"
   @spec tuples1d(binary, tuple) :: [tuple]
-  def tuples1d text, mapping do
-    funs = Tuple.to_list(mapping)
+  def tuples1d text, shape do
+    funs = Tuple.to_list(shape)
 
     text
       |> strings2d
       |> Enum.map(fn cols ->
         Enum.zip([funs, cols])
-          |> Enum.map(fn {fun, col} -> apply(fun, [col]) end)
+          |> Enum.map(fn
+              {fun, col} when is_function(fun) -> apply(fun, [col])
+              {:integer, col}                  -> String.to_integer(col)
+              {:atom, col}                     -> String.to_existing_atom(col)
+              {:string, col}                   -> col
+              {:charlist, col}                 -> String.to_charlist(col)
+              {:float, col}                    -> String.to_float(col)
+            end)
       end)
       |> Enum.map(&List.to_tuple/1)
   end

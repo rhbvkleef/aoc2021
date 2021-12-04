@@ -9,7 +9,7 @@ aoc 2021, 4 do
     boards = rest
       |> Enum.chunk_by(&(&1 != ""))
       |> Enum.reject(&(&1 == [""]))
-      |> Enum.map(fn board -> Enum.map(board, &(String.split(&1, " ", trim: true))) end)
+      |> Enum.map(fn board -> Enum.map(board, &String.split(&1, " ", trim: true)) end)
 
     {numbers, boards}
   end
@@ -19,7 +19,7 @@ aoc 2021, 4 do
     applied = Enum.map(boards, &(apply_number(number, &1)))
 
     case Enum.find(applied, &(elem(&1, 0))) do
-      nil -> part1{numbers, Enum.map(applied, &(elem(&1, 1)))}
+      nil -> part1{numbers, Enum.map(applied, &elem(&1, 1))}
       {_, board} -> List.flatten(board)
         |> Enum.filter(&(&1 != :tick))
         |> Enum.map(&String.to_integer/1)
@@ -37,7 +37,7 @@ aoc 2021, 4 do
 
     {match, rest_board} = Enum.zip(new_line, columns)
       |> Enum.map(fn {l, r} -> l == :tick and r end)
-      |> then(&(apply_number(number, lines, &1)))
+      |> then(&apply_number(number, lines, &1))
 
     {match or Enum.all?(new_line, &(&1 == :tick)), [new_line|rest_board]}
   end
@@ -45,11 +45,11 @@ aoc 2021, 4 do
 
   @impl Aoc.Solution
   def part2 {[number|numbers], boards} do
-    applied = Enum.map(boards, &(apply_number(number, &1)))
+    applied = Enum.map(boards, &apply_number(number, &1))
 
     case Enum.filter(applied, &(not elem(&1, 0))) do
       [{_, board}] -> part1{[number|numbers], [board]}
-      unfinished   -> part2{numbers, Enum.map(unfinished, &(elem(&1, 1)))}
+      unfinished   -> part2{numbers, Enum.map(unfinished, &elem(&1, 1))}
     end
   end
 end
