@@ -3,40 +3,28 @@ defmodule Aoc2021.Solution.Day4 do
 
   @impl Aoc2021.Solution
   def parse text do
-    [calls|rest] = String.split(text, "\n")
+    [calls, ""|rest] = String.split(text, "\n")
     numbers = String.split(calls, ",")
 
-    boards = tl(rest)
-      |> Enum.chunk_while([], fn "", acc -> {:cont, Enum.reverse(acc), []}
-      el, acc -> {:cont, [el | acc]} end, fn [] -> {:cont, []}
-        acc -> {:cont, Enum.reverse(acc), []} end)
-      |> Enum.map(&parse_board/1)
+    boards = rest
+      |> Enum.chunk_by(&(&1 != ""))
+      |> Enum.reject(&(&1 == [""]))
+      |> Enum.map(fn board -> Enum.map(board, &(String.split(&1, " ", trim: true))) end)
 
     {numbers, boards}
   end
-
-  defp parse_board([""|lines]), do: parse_board(lines)
-  defp parse_board([line|lines]) do
-    [String.split(line, " ", trim: true) | parse_board lines]
-  end
-  defp parse_board([]), do: []
 
   @impl Aoc2021.Solution
   def part1 {[number|numbers], boards} do
     applied = Enum.map(boards, &(apply_number(number, &1)))
 
-    match = Enum.find(applied, &(elem(&1, 0)))
-
-    if match == nil do
-      part1{numbers, Enum.map(applied, &(elem(&1, 1)))}
-    else
-      {_, board} = match
-      remaining_sum = List.flatten(board)
+    case Enum.find(applied, &(elem(&1, 0))) do
+      nil -> part1{numbers, Enum.map(applied, &(elem(&1, 1)))}
+      {_, board} -> List.flatten(board)
         |> Enum.filter(&(&1 != :tick))
         |> Enum.map(&String.to_integer/1)
         |> Enum.sum
-
-      remaining_sum * String.to_integer(number)
+        |> then(&(&1 * String.to_integer(number)))
     end
   end
 
@@ -47,10 +35,9 @@ defmodule Aoc2021.Solution.Day4 do
     new_line = Enum.map(line, fn ^number -> :tick
       num -> num end)
 
-    new_columns = Enum.zip(new_line, columns)
+    {match, rest_board} = Enum.zip(new_line, columns)
       |> Enum.map(fn {l, r} -> l == :tick and r end)
-
-    {match, rest_board} = apply_number(number, lines, new_columns)
+      |> then(&(apply_number(number, lines, &1)))
 
     {match or Enum.all?(new_line, &(&1 == :tick)), [new_line|rest_board]}
   end
@@ -60,11 +47,9 @@ defmodule Aoc2021.Solution.Day4 do
   def part2 {[number|numbers], boards} do
     applied = Enum.map(boards, &(apply_number(number, &1)))
 
-    unfinished = Enum.filter(applied, &(not elem(&1, 0)))
-
-    case unfinished do
+    case Enum.filter(applied, &(not elem(&1, 0))) do
       [{_, board}] -> part1{[number|numbers], [board]}
-      _ -> part2{numbers, Enum.map(unfinished, &(elem(&1, 1)))}
+      unfinished   -> part2{numbers, Enum.map(unfinished, &(elem(&1, 1)))}
     end
   end
 end
