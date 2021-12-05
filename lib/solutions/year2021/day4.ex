@@ -35,8 +35,7 @@ aoc 2021, 4 do
     new_line = Enum.map(line, fn ^number -> :tick
       num -> num end)
 
-    {match, rest_board} = Enum.zip(new_line, columns)
-      |> Enum.map(fn {l, r} -> l == :tick and r end)
+    {match, rest_board} = Enum.zip_with(new_line, columns, &(&1 == :tick and &2))
       |> then(&apply_number(number, lines, &1))
 
     {match or Enum.all?(new_line, &(&1 == :tick)), [new_line|rest_board]}
