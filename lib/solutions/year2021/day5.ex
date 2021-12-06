@@ -14,7 +14,7 @@ aoc 2021, 5 do
       Enum.filter(input, fn [x1, y1, x2, y2] -> x1 == x2 or y1 == y2 end)
         |> Enum.each(&plot(&1, ets))
 
-      :ets.select_count(ets, [{{:"$1", :"$2"}, [{:>, :"$2", 1}], [true]}])
+      :ets.select_count(ets, [{{:_, :"$2"}, [{:>, :"$2", 1}], [true]}])
     end
   end
 
@@ -23,15 +23,17 @@ aoc 2021, 5 do
     with_ets fn ets ->
       Enum.each(input, &plot(&1, ets))
 
-      :ets.select_count(ets, [{{:"$1", :"$2"}, [{:>, :"$2", 1}], [true]}])
+      :ets.select_count(ets, [{{:_, :"$2"}, [{:>, :"$2", 1}], [true]}])
     end
   end
 
   defp with_ets fun do
     ets = :ets.new(:temp, [:set])
-    result = fun.(ets)
-    :ets.delete(ets)
-    result
+    try do
+      fun.(ets)
+    after
+      :ets.delete(ets)
+    end
   end
 
   defp plot [x, from1y, x, to1y], ets do
