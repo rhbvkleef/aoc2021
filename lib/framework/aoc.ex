@@ -25,7 +25,7 @@ defmodule Aoc do
 
         @test_input File.read!(Path.relative_to_cwd("priv/test_inputs/year#{@year}/day#{@day}.txt"))
 
-        defmacro parsed do
+        def parsed do
           @mod.parse(@test_input)
         end
 

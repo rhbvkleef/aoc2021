@@ -2,7 +2,7 @@ import Aoc
 
 aoc_test 2021, 6 do
   test "Parse" do
-    assert parsed() == [3, 4, 3, 1, 2]
+    assert parsed() == Nx.tensor([0, 1, 1, 2, 1, 0, 0, 0, 0])
   end
 
   test "Part 1" do
