@@ -6,15 +6,16 @@ aoc 2021, 7 do
 
   @impl Aoc.Solution
   def part1(input) do
-    Enum.map(0..Enum.max(input), fn offset ->
-      Enum.map(input, &abs(offset - &1)) |> Enum.sum
-    end)
-      |> Enum.min(fn -> nil end)
+    median = Enum.sort(input) |> Enum.at(floor(length(input) / 2))
+
+    Enum.map(input, &abs(median - &1)) |> Enum.sum
   end
 
   @impl Aoc.Solution
   def part2(input) do
-    Enum.map(0..Enum.max(input), fn offset ->
+    mean = floor(Enum.sum(input) / length(input))
+
+    Enum.map((mean - 5)..(mean + 5), fn offset ->
       Enum.map(input, fn crab ->
         num = abs(offset - crab)
         round((num / 2) * (1 + num))
