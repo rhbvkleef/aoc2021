@@ -8,19 +8,19 @@ aoc 2021, 7 do
   def part1(input) do
     median = Enum.sort(input) |> Enum.at(floor(length(input) / 2))
 
-    Enum.map(input, &abs(median - &1)) |> Enum.sum
+    score(input, [median], &abs(&1 - &2))
   end
 
   @impl Aoc.Solution
   def part2(input) do
-    mean = floor(Enum.sum(input) / length(input))
+    mean = Enum.sum(input) / length(input)
 
-    Enum.map((mean - 5)..(mean + 5), fn offset ->
-      Enum.map(input, fn crab ->
-        num = abs(offset - crab)
-        round((num / 2) * (1 + num))
-      end) |> Enum.sum
-    end)
-      |> Enum.min(fn -> nil end)
+    score(input, floor(mean)..ceil(mean), &round((abs(&1 - &2) / 2) * (abs(&1 - &2) + 1)))
+  end
+
+  defp score(input, range, score_fun) do
+    Enum.map(range, fn offset ->
+      Enum.map(input, &score_fun.(offset, &1)) |> Enum.sum
+    end) |> Enum.min
   end
 end
