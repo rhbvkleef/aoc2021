@@ -39,18 +39,13 @@ aoc 2021, 6 do
     part1(input, 256)
   end
 
-  def matrix_power(matrix, 0) do
-    Nx.subtract(matrix, matrix)
-  end
   def matrix_power(matrix, power) do
     Integer.digits(power, 2)
     |> Enum.reverse()
-    |> Enum.reduce({nil, matrix}, fn bit, {result_matrix, exp_matrix} ->
-      cond do
-        result_matrix == nil && bit == 1 -> {exp_matrix, Nx.dot(exp_matrix, exp_matrix)}
-        result_matrix == nil && bit == 0 -> {nil, Nx.dot(exp_matrix, exp_matrix)}
-        bit == 1 -> {Nx.dot(result_matrix, exp_matrix), Nx.dot(exp_matrix, exp_matrix)}
-        bit == 0 -> {result_matrix, Nx.dot(exp_matrix, exp_matrix)}
+    |> Enum.reduce({Nx.eye(matrix), matrix}, fn bit, {result_matrix, exp_matrix} ->
+      case bit do
+        1 -> {Nx.dot(result_matrix, exp_matrix), Nx.dot(exp_matrix, exp_matrix)}
+        0 -> {result_matrix, Nx.dot(exp_matrix, exp_matrix)}
       end
     end)
     |> elem(0)
