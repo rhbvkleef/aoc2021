@@ -3,20 +3,28 @@ import Aoc
 aoc 2021, 8 do
   @impl Aoc.Solution
   def parse(text) do
-    String.split(text, "\n", trim: true)
-    |> Enum.map(fn line ->
-      String.split(line, "|")
-      |> Enum.map(fn parts ->
-        String.split(parts, " ", trim: true)
-        |> Enum.map(&:erlang.binary_to_list/1)
-      end)
-    end)
+    :erlang.binary_to_list(text)
+    |> Enum.reduce(
+      {_result=[], _text_acc=[], _current_examples=[], _current_output=nil},
+      fn char, {result, text_acc, current_examples, current_output} ->
+        case char do
+          ?\n -> {[{current_examples, Enum.reverse([text_acc|current_output])}|result], [], [], nil}
+          ?|  -> {result, [], current_examples, []}
+          ?\  when text_acc == [] -> {result, text_acc, current_examples, current_output}
+          ?\  when current_output == nil -> {result, [], [text_acc|current_examples], nil}
+          ?\  ->
+            {result, [], current_examples, [text_acc|current_output]}
+          _ when char in ?a..?g -> {result, [char|text_acc], current_examples, current_output}
+        end
+      end
+    )
+    |> elem(0)
   end
 
   @impl Aoc.Solution
   def part1(input) do
     input
-    |> Enum.reduce(0, fn [_example, actual], acc ->
+    |> Enum.reduce(0, fn {_example, actual}, acc ->
       Enum.reduce(actual, acc, fn elems, other_acc ->
         case length(elems) do
           2 -> 1
@@ -27,6 +35,7 @@ aoc 2021, 8 do
         end + other_acc
       end)
     end)
+
   end
 
   @impl Aoc.Solution
@@ -36,7 +45,7 @@ aoc 2021, 8 do
     |> Enum.sum
   end
 
-  defp do_line([example, output]) do
+  defp do_line({example, output}) do
     sorted = Enum.sort(example, &(length(&1) < length(&2)))
     input_elements_one = Enum.at(sorted, 0)
     input_elements_four = Enum.at(sorted, 2)
