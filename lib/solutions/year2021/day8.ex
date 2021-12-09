@@ -52,28 +52,28 @@ aoc 2021, 8 do
 
     output
     |> Enum.map(fn output_digit_elements -> find_digit(output_digit_elements, {input_elements_one, input_elements_four}) end)
-    |> :erlang.list_to_integer
+    |> Integer.undigits
   end
 
   defp find_digit(output_elements, {input_elements_one, input_elements_four}) do
     case length(output_elements) do
-      2 -> ?1
-      3 -> ?7
-      4 -> ?4
-      7 -> ?8
+      2 -> 1
+      3 -> 7
+      4 -> 4
+      7 -> 8
       5 -> case length(output_elements -- input_elements_one) do
-          3 -> ?3
+          3 -> 3
           4 -> case length(output_elements -- input_elements_four) do
-            2 -> ?5
-            3 -> ?2
+            2 -> 5
+            3 -> 2
           end
         end
       6 -> case length(output_elements -- input_elements_one) do
         4 -> case length(output_elements -- input_elements_four) do
-          2 -> ?9
-          3 -> ?0
+          2 -> 9
+          3 -> 0
         end
-        5 -> ?6
+        5 -> 6
       end
     end
   end
