@@ -18,20 +18,20 @@ aoc 2021, 6 do
   @impl Aoc.Solution
   def part1(counters, remaining_days \\ 80) do
     matrix = ~M"""
-      0 0 0 0 0 0 1 0 1
-      1 0 0 0 0 0 0 0 0
       0 1 0 0 0 0 0 0 0
       0 0 1 0 0 0 0 0 0
       0 0 0 1 0 0 0 0 0
       0 0 0 0 1 0 0 0 0
       0 0 0 0 0 1 0 0 0
       0 0 0 0 0 0 1 0 0
-      0 0 0 0 0 0 0 1 0
+      1 0 0 0 0 0 0 1 0
+      0 0 0 0 0 0 0 0 1
+      1 0 0 0 0 0 0 0 0
       """
 
-    function = matrix_power(matrix, remaining_days)
+    function = dot_power(matrix, remaining_days)
 
-    Nx.dot(counters, function) |> Nx.sum |> Nx.to_number
+    Nx.dot(function, counters) |> Nx.sum |> Nx.to_number
   end
 
   @impl Aoc.Solution
@@ -39,15 +39,46 @@ aoc 2021, 6 do
     part1(input, 256)
   end
 
-  def matrix_power(matrix, power) do
-    Integer.digits(power, 2)
+  ##
+  # Matrix exponentiation
+  # Source: https://github.com/elixir-nx/nx/pull/583
+  # Author: @rhbvkleef (me)
+  ##
+
+  import Nx.Defn.Kernel, only: [assert_shape_pattern: 2]
+
+  def dot_power(tensor, power) when is_integer(power) and power < 0 do
+    dot_power(Nx.LinAlg.invert(tensor), -power)
+  end
+
+  def dot_power(tensor, 0) do
+    # We need a special-case for 0 since the code below
+    # is optimized to not compute an initial eye.
+    Nx.Defn.Kernel.assert_shape_pattern(tensor, {x, x})
+
+    Nx.eye(tensor)
+  end
+
+  def dot_power(tensor, power) when is_integer(power) do
+    Nx.Defn.Kernel.assert_shape_pattern(tensor, {x, x})
+
+    power
+    |> Integer.digits(2)
+    |> tl()
     |> Enum.reverse()
-    |> Enum.reduce({Nx.eye(matrix), matrix}, fn bit, {result_matrix, exp_matrix} ->
-      case bit do
-        1 -> {Nx.dot(result_matrix, exp_matrix), Nx.dot(exp_matrix, exp_matrix)}
-        0 -> {result_matrix, Nx.dot(exp_matrix, exp_matrix)}
-      end
+    |> Enum.reduce({nil, tensor}, fn
+      1, {nil, exp_tensor} ->
+        {exp_tensor, Nx.dot(exp_tensor, exp_tensor)}
+
+      1, {result_tensor, exp_tensor} ->
+        {Nx.dot(result_tensor, exp_tensor), Nx.dot(exp_tensor, exp_tensor)}
+
+      0, {result_tensor, exp_tensor} ->
+        {result_tensor, Nx.dot(exp_tensor, exp_tensor)}
     end)
-    |> elem(0)
+    |> then(fn
+      {nil, exp_tensor} -> exp_tensor
+      {result, exp_tensor} -> Nx.dot(result, exp_tensor)
+    end)
   end
 end
