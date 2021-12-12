@@ -26,8 +26,16 @@ defmodule Mix.Tasks.Aoc do
     find_inputs(input_root)
       |> Enum.filter(fn {year, _, _} -> if Enum.empty?(years) do true else Enum.member?(years, year) end end)
       |> Enum.filter(fn {_, day, _}  -> if Enum.empty?(days) do true else Enum.member?(days, day) end end)
+      |> Enum.sort(fn
+        {year1, _, _}, {year2, _, _} when year1 < year2 -> true
+        {year1, _, _}, {year2, _, _} when year1 > year2 -> false
+        {_, day1, _}, {_, day2, _} when day1 < day2 -> true
+        {_, day1, _}, {_, day2, _} when day1 > day2 -> false
+        _, _ -> true
+      end)
       |> Stream.map(fn {year, day, file} -> Aoc.Solution.run(year, day, file) end)
-      |> Stream.each(&format_output/1)
+      |> Stream.map(&Aoc.Result.fmt/1)
+      |> Stream.each(&IO.puts/1)
       |> Stream.run
   end
 
@@ -43,27 +51,5 @@ defmodule Mix.Tasks.Aoc do
     [_, year, day] = Regex.run(~r/.*\/year([0-9]+)\/day([0-9]+).txt/, filename)
 
     {String.to_integer(year), String.to_integer(day)}
-  end
-
-  defp format_output {year, day, iotime, parsetime, part1, part2} do
-    IO.puts("Year #{year} day #{day} results:")
-    IO.puts("\tFile reading took #{iotime}us")
-    IO.puts("\tParsing took #{parsetime}us")
-
-    IO.puts("\tPart 1 ran in #{elem(part1, 0)}us:")
-    inspect(elem(part1, 1))
-      |> String.split("\n", trim: true)
-      |> Enum.map(&"\t\t#{&1}")
-      |> Enum.join("\n")
-      |> IO.puts
-
-    IO.puts("\tPart 2 ran in #{elem(part2, 0)}us:")
-    inspect(elem(part2, 1))
-      |> String.split("\n", trim: true)
-      |> Enum.map(&"\t\t#{&1}")
-      |> Enum.join("\n")
-      |> IO.puts
-
-    :ok
   end
 end

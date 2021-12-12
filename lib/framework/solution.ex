@@ -8,9 +8,18 @@ defmodule Aoc.Solution do
 
     {iotime, text} = :timer.tc(File, :read!, [file])
     {parsetime, input} = :timer.tc(module, :parse, [text])
-    part1 = :timer.tc(module, :part1, [input])
-    part2 = :timer.tc(module, :part2, [input])
+    {part1time, part1result} = :timer.tc(module, :part1, [input])
+    {part2time, part2result} = :timer.tc(module, :part2, [input])
 
-    {year, day, iotime, parsetime, part1, part2}
+    %Aoc.Result{
+      year:        year,
+      day:         day,
+      iotime:      iotime,
+      parsetime:   parsetime,
+      part1time:   part1time,
+      part1result: part1result,
+      part2time:   part2time,
+      part2result: part2result,
+    }
   end
 end
